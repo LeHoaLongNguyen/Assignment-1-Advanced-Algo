@@ -2,18 +2,7 @@
 
 **Le Hoa Long Nguyen, 26117008, 41052** · Assignment 1, Track A
 
-<!--
-HOW TO USE THIS TEMPLATE (delete this comment block before submitting)
-- **[FILL IN: …]** marks something only you can write. Replace the whole marker.
-- *Guidance* lines in italics say what a section should contain. Delete them before you submit.
-- Numbers marked **[UPDATE]** come from your earlier run. Check them against plots/summary.csv from your latest run.
-- Figures are linked from the plots/ folder, so they display on GitHub automatically once plots/ is committed.
-- Keep sections (c) and (d) in your own voice.
--->
-
 ## (a) What I built
-
-_Guidance: orient the reader before they open the repository. Around half a page. Don't repeat the README's build steps._
 
 I implemented the Knuth–Morris–Pratt (KMP) string-matching algorithm in C++17 and compared it empirically against the naive (brute-force) algorithm. I chose to do this algorithm as i was particularly interested in a string-matching algorithm and i thought it was be easier to understand as opposed to some of the other options.
 
@@ -80,13 +69,13 @@ _Guidance: write each hypothesis as a testable prediction, then say in the resul
 
 **Experiments.** Each experiment changes one variable and holds the rest fixed.
 
-| #   | Input                                      | Varied                    | Fixed                 |
-| --- | ------------------------------------------ | ------------------------- | --------------------- |
-| 1   | Random text, σ = 4                         | n = 100,000 to 10,000,000 | m = 10                |
-| 2   | Adversarial: text `aaa…a`, pattern `aa…ab` | m = 2 to 1,000            | n = 1,000,000         |
-| 3   | Random text, σ = 4                         | m = 2 to 1,000            | n = 1,000,000         |
-| 4   | Random text                                | σ = 2 to 26               | n = 1,000,000, m = 20 |
-| 5   | English text Alice in Borderland text      | m = 2 to 100              | the book              |
+| #   | Input                                                                                                              | Varied                    | Fixed                 |
+| --- | ------------------------------------------------------------------------------------------------------------------ | ------------------------- | --------------------- |
+| 1   | Random text, σ = 4                                                                                                 | n = 100,000 to 10,000,000 | m = 10                |
+| 2   | Adversarial: text `aaa…a`, pattern `aa…ab`                                                                         | m = 2 to 1,000            | n = 1,000,000         |
+| 3   | Random text, σ = 4                                                                                                 | m = 2 to 1,000            | n = 1,000,000         |
+| 4   | Random text                                                                                                        | σ = 2 to 26               | n = 1,000,000, m = 20 |
+| 5   | English text: Alice's Adventures in Wonderland (Lewis Carroll), Millennium Fulcrum Edition 3.0, 152,138 characters | m = 2 to 100              | the book              |
 
 **Data generation.**
 
@@ -114,20 +103,19 @@ _Guidance: write each hypothesis as a testable prediction, then say in the resul
 
 ### Results
 
-In running time, naive was faster than KMP on every realistic input, by about 1–10%, even though it made more character comparisons. KMP was faster only on the adversarial input, from m = 5 upwards and by up to 362×, and marginally on binary text (σ = 2). In comparisons, KMP never did more work than naive. **[UPDATE: add the English result once confirmed.]**
-
-_Guidance: for each experiment, give 1–2 key numbers under the figure and say whether the hypothesis held. Save the "why" for the Analysis section._
+In running time, naive was faster than KMP on most realistic inputs, typically by about 5–10%, even though it made more character comparisons. KMP was faster on every adversarial setting, by up to 372× at m = 1,000. A few other settings went KMP's way (binary text, n = 1,000,000 in experiment 1, and English text at m = 5), but by margins small or inconsistent enough to be timing noise. In comparisons, KMP never made more than naive, apart from a single extra comparison at m = 2 on the adversarial input.
 
 #### Experiment 1: growing text length (H1)
 
 ![Figure 1: random text, growing n](plots/fig1_vary_n.png)
 
-| n          | Naive   | KMP     |
-| ---------- | ------- | ------- |
-| 1,000,000  | 3.42 ms | 3.69 ms |
-| 10,000,000 | 30.3 ms | 32.9 ms |
+| n          | Naive    | KMP      |
+| ---------- | -------- | -------- |
+| 100,000    | 0.304 ms | 0.332 ms |
+| 1,000,000  | 4.15 ms  | 4.00 ms  |
+| 10,000,000 | 31.0 ms  | 33.1 ms  |
 
-H1 held: 10× more text took about 9× longer for both. Naive was about 8% faster at every size. **[UPDATE]**
+H1 held: going from 100,000 to 10,000,000 characters (100× more text) took about 100× longer for both algorithms. Naive was faster at 6 of the 7 sizes, by 7–14%. The exception, n = 1,000,000, where KMP was 4% faster, is most likely timing noise, since it breaks the pattern of every other size.
 
 #### Experiment 2: adversarial input (H2)
 
@@ -135,18 +123,18 @@ H1 held: 10× more text took about 9× longer for both. Naive was about 8% faste
 
 | m     | Naive   | KMP     | Naive comparisons | KMP comparisons |
 | ----- | ------- | ------- | ----------------- | --------------- |
-| 2     | 1.80 ms | 1.98 ms | 1,999,998         | 1,999,999       |
-| 10    | 7.85 ms | 1.95 ms | 9,999,910         | 1,999,991       |
-| 100   | 78.0 ms | 1.93 ms | 99,990,100        | 1,999,901       |
-| 1,000 | 722 ms  | 2.00 ms | 999,001,000       | 1,999,001       |
+| 2     | 2.38 ms | 2.03 ms | 1,999,998         | 1,999,999       |
+| 10    | 7.87 ms | 2.02 ms | 9,999,910         | 1,999,991       |
+| 100   | 78.9 ms | 1.93 ms | 99,990,100        | 1,999,901       |
+| 1,000 | 726 ms  | 1.95 ms | 999,001,000       | 1,999,001       |
 
-H2 held. Naive's comparisons equal (n − m + 1) × m exactly, and KMP stays just under 2n for every m. The exception is m = 2, where both did 2n comparisons and naive was about 10% faster. **[UPDATE]**
+H2 held. Naive's comparisons equal (n − m + 1) × m exactly, and its time grew in proportion to m, from 2.38 ms to 726 ms. KMP stayed just under 2n comparisons and about 2 ms for every m, making it 372× faster at m = 1,000.
 
 #### Experiment 3: random text, growing pattern length (H3)
 
 ![Figure 3: random text, growing m](plots/fig3_random_vary_m.png)
 
-H3 held. Naive stayed at about 3.4 ms and 1.333 comparisons per character for every m from 5 to 1,000, matching σ/(σ − 1) = 4/3. KMP made fewer comparisons (about 1.25 per character) but took about 3.55 ms, around 5% slower. At m = 2 naive made 1.25 comparisons per character, which matches the exact expectation 1 + 1/σ for a 2-character pattern. **[UPDATE]**
+H3 held. Naive stayed between 3.28 and 3.43 ms and at 1.333 comparisons per character for every m from 5 to 1,000, matching σ/(σ − 1) = 4/3. KMP made fewer comparisons (about 1.25 per character) but took 3.55–3.72 ms, 5–9% slower at every m. At m = 2 naive made 1.25 comparisons per character, which matches the exact expectation 1 + 1/σ for a 2-character pattern.
 
 #### Experiment 4: alphabet size (H4)
 
@@ -154,18 +142,27 @@ H3 held. Naive stayed at about 3.4 ms and 1.333 comparisons per character for ev
 
 | σ   | Naive comparisons/char | KMP comparisons/char | Faster          |
 | --- | ---------------------- | -------------------- | --------------- |
-| 2   | 2.00                   | 1.39                 | KMP, about 3%   |
-| 4   | 1.33                   | 1.25                 | Naive, about 5% |
-| 8   | 1.14                   | 1.13                 | Naive, about 3% |
+| 2   | 2.00                   | 1.39                 | KMP, about 1.5% |
+| 4   | 1.33                   | 1.25                 | Naive, about 4% |
+| 8   | 1.14                   | 1.12                 | Naive, about 2% |
 | 26  | 1.04                   | 1.04                 | Tie (within 1%) |
 
-H4 held. Naive's comparisons follow σ/(σ − 1) at every σ, and the gap between the algorithms closes as σ grows. KMP's win at σ = 2 was narrow: faster in 4 of the 5 patterns. **[UPDATE]**
+H4 held. Naive's comparisons follow σ/(σ − 1) at every σ, and the gap between the algorithms closes as σ grows. σ = 2 is the only random-text setting where KMP was faster, in both of my runs (by about 3% in an earlier run and 1.5% in this one). The advantage is consistent but small.
 
 #### Experiment 5: English text (H5)
 
 ![Figure 5: English text, growing m](plots/fig5_english.png)
 
-**[FILL IN: the median times and comparisons per character for a few values of m, from summary.csv. Did H5 hold?]**
+| m   | Naive    | KMP      | Naive comparisons/char | KMP comparisons/char | Faster           |
+| --- | -------- | -------- | ---------------------- | -------------------- | ---------------- |
+| 2   | 0.203 ms | 0.239 ms | 1.072                  | 1.063                | Naive, about 15% |
+| 5   | 0.216 ms | 0.176 ms | 1.041                  | 1.033                | KMP, about 23%   |
+| 10  | 0.208 ms | 0.226 ms | 1.046                  | 1.038                | Naive, about 9%  |
+| 20  | 0.188 ms | 0.191 ms | 1.065                  | 1.059                | Naive, about 1%  |
+| 50  | 0.183 ms | 0.185 ms | 1.041                  | 1.032                | Naive, about 1%  |
+| 100 | 0.222 ms | 0.229 ms | 1.082                  | 1.074                | Naive, about 3%  |
+
+H5 held for comparisons. Both algorithms made only 1.03–1.08 comparisons per character, less than 1% apart, so English behaves like random text over a large alphabet: almost every alignment fails on the first character. Naive was faster in 5 of the 6 settings, but the timings are less reliable than in the other experiments. The text is only 152,138 characters, so each search takes about 0.2 ms, and the results jump around without a clear trend as m grows (KMP's 23% win at m = 5 is the clearest example).
 
 #### Summary across experiments
 
@@ -173,38 +170,33 @@ H4 held. Naive's comparisons follow σ/(σ − 1) at every σ, and the gap betwe
 
 ![Figure 7: share of KMP's time spent building the LPS array](plots/fig7_preprocessing_share.png)
 
-Building the LPS array took under 0.07% of KMP's total time even at m = 1,000, with n = 1,000,000. **[UPDATE]**
+Building the LPS array took under 0.08% of KMP's total time even at m = 1,000, with n = 1,000,000.
 
 ### Analysis: why the results came out this way
 
-_Guidance: this is where most of the marks are. Answer each question below in your own words, using your numbers as evidence. One or two paragraphs each. Delete the questions once you've answered them._
+The results can be explained by splitting running time into two factors: time = number of comparisons × cost per comparison. Theory predicts the first factor exactly, but says nothing about the second.
 
-**Where theory and practice agree.** Comparison counts matched the formulas almost exactly in every experiment.
+| Setting                 | Naive comparisons/char | KMP comparisons/char | Naive ns/comparison | KMP ns/comparison |
+| ----------------------- | ---------------------- | -------------------- | ------------------- | ----------------- |
+| Random, σ = 4 (m = 100) | 1.333                  | 1.250                | 2.55                | 2.86              |
+| Random, σ = 2           | 2.000                  | 1.391                | 2.54                | 3.59              |
+| Adversarial, m = 1,000  | 999.0                  | 1.999                | 0.73                | 0.98              |
 
-**[FILL IN: why do comparison counts match theory so closely, while times don't? What does a comparison count ignore about how a program actually runs?]**
+**Where theory and practice agree.** Comparison counts matched the formulas almost exactly: naive made exactly (n − m + 1) × m comparisons on the adversarial input, and 1.333 per character on random text with σ = 4, matching σ/(σ − 1). This is because a comparison count measures the same abstract operation the theory analyses, on inputs whose statistics are known exactly. It is deterministic and machine-independent. Running time also depends on how expensive each comparison is on a real CPU: loop overhead, memory reads, branch prediction and what the compiler does with the code. The comparison model treats all of these as free.
 
-**Divergence 1: KMP does less work but runs slower on typical text.** On random text with σ = 4, KMP made about 6% fewer comparisons than naive but took about 5% longer.
+**Divergence 1: KMP does less work but runs slower on typical text.** On random text with σ = 4, KMP made about 6% fewer comparisons than naive (1.25 against 1.33 per character) but took 5–9% longer, because each of its comparisons cost about 12% more (2.86 ns against 2.55 ns). The likely reasons are in the structure of the two loops:
 
-**[FILL IN: explain why.]** Questions to work through:
+- In naive, each alignment is independent: whether position i matches doesn't affect where the next alignment starts, because i always increases by one. The CPU can start work on the next alignment before the current one has finished.
+- In KMP, every iteration depends on the previous one. The next comparison uses j, which is only known once the previous comparison and, on a mismatch, the `lps[j - 1]` lookup have finished. This forms a chain the CPU has to follow one step at a time.
+- KMP also chooses between three cases on every iteration based on the data, and a mismatch with j > 0 costs a whole extra iteration and a memory read without advancing i. Naive has no equivalent cost.
 
-1. In naive's inner loop, what happens at each step? How many branches are there, and how predictable are they on random text?
-2. In KMP's loop, which of the three cases runs next depends on the data. How predictable is that for the CPU?
-3. On a mismatch with j > 0, KMP reads `lps[j - 1]` and loops again without moving `i`. What does that cost that naive doesn't pay?
-4. Search terms: "branch misprediction", "instruction-level parallelism".
+**Divergence 2: saving comparisons only pays off when the saving is large.** KMP is faster only when the comparisons it saves outweigh its higher cost per comparison. At σ = 4 it saves about 6% of comparisons but pays about 12% more per comparison, so it loses. At σ = 2 it saves about 30% but each comparison costs about 42% more (more mismatches trigger fallbacks), so the two nearly cancel, which matches the small 1.5% win. On the adversarial input, naive needs 999 comparisons per text character at m = 1,000 against KMP's 2, a saving of 99.8%. No difference in cost per comparison can make up for that, which is why KMP was 372× faster. Interestingly, naive's cost per comparison drops to 0.73 ns on the adversarial input: its inner loop repeats the same successful comparison hundreds of times in a row, which the CPU predicts well. Even so, it cannot overcome doing 500 times more work.
 
-**Divergence 2: when does saving comparisons pay off?** KMP won at σ = 2, lost at σ = 4, and won by 362× on the adversarial input.
+**Divergence 3: equal work gives no reliable winner.** At m = 2 on the adversarial input, both algorithms made exactly 2n comparisons. In an earlier run naive was about 10% faster there; in the final run KMP was about 17% faster. With the work held equal, the difference between them is within run-to-run variation. This shows that small timing differences at a single setting should not be over-interpreted, and it is why I used medians of repeated runs and several patterns.
 
-**[FILL IN: explain the pattern. Compare how many comparisons KMP saves in each case with the extra cost per step from Divergence 1. Why is the adversarial case so extreme?]**
+**Compiler effect.** A preliminary run of the same code with g++ on Linux (run during development with AI assistance, not on my machine) showed naive about 20% faster than KMP on random text, compared with 5–9% under MSVC. The cost per comparison therefore depends on the compiler, not only the algorithm. Large asymptotic differences, like the 372× on adversarial input, hold regardless of compiler, but small constant-factor differences may not carry over to other platforms.
 
-**Divergence 3: equal work, different speed.** At m = 2 on the adversarial input, both algorithms made 2n comparisons, but naive was about 10% faster.
-
-**[FILL IN: what does this case show on its own, with the work held equal?]**
-
-**Compiler effect.** A preliminary run of the same code with g++ on Linux showed naive about 20% faster than KMP on random text. With MSVC it was about 5–8%.
-
-**[FILL IN: what does it mean that the gap depends on the compiler? Keep this short; your main results are from MSVC. Note that the g++ run was done by the AI, not on your machine: mention that in section (d), or cut this paragraph.]**
-
-**Conclusion.** **[FILL IN: 3–4 sentences. Which algorithm would you use in practice, and when? What is KMP's real advantage, if not speed on typical text?]**
+**Conclusion.** For typical text, such as English or random data, the naive algorithm was slightly faster than KMP in practice, because its simpler loop outweighs KMP's small saving in comparisons. KMP's real advantage is its guarantee: it never does more than 2n comparisons, so it cannot be slowed down by repetitive or adversarial input, where naive became hundreds of times slower. Because it never moves backwards in the text, it can also process a stream of data without storing it. I would use a simple or library search for ordinary text, and KMP when the input could be highly repetitive (such as DNA or log files) or controlled by an untrusted user.
 
 ### Limitations
 
@@ -215,24 +207,16 @@ _Guidance: keep each to one or two sentences, and say how it could be fixed._
 - **Timing noise.** Some individual measurements vary between patterns and runs. The median of 11 runs and 5 patterns reduces this but doesn't remove it. Differences of 1–2% should be treated as ties.
 - **Input range.** Random text is uniformly distributed, which real data rarely is. Only one English text was tested.
 - **Baseline choice.** Only naive was compared. A practical baseline such as Boyer–Moore–Horspool or `std::string::find` might change the conclusions.
-- **[FILL IN: anything else you noticed, or delete this line.]**
 
 ## (c) What I learned
 
 _Guidance: the spec asks for specific examples over general statements. Each answer should name a concrete moment, number or line of code. Write these entirely in your own words, and use the prompts only if they were true for you._
 
-**What surprised me.** 
+**What surprised me.**
 What surprised me the most was that while the KMP algorithm was consistently doing fewer character comparisons than the naive approach on all tests that were performed, it still ran slower than the naive approach on most cases other than the worst case scenarios such as `aaaa....aa` or `aaaaaab`. I believe this was due to the KMP algorithm having to create an LPS array of size m before it started the comparisons whilst the naive approach started straight away.
 
-
-**What I initially got wrong.** **[FILL IN]**
-There were a few logic errors when i was first typing up the KMP algorithm, one that really stuck with me was when i was comparing `text[i]` with `pattern[i]` instead of `pattern[j]` which resulted in a string subcript out of range crash. Luckily the use of ai was approved for this assignment and it could detect my mistake instantly.
-
-Possible starting points:
-
-- Comparing `text[i]` with `pattern[i]` instead of `pattern[j]` in the search, which caused the "string subscript out of range" crash.
-- Writing `else (j == 0); { i++; }`, where the semicolon ended the `else`, so `i++` ran on every iteration.
-- Returning `-1` from a function declared to return `std::vector<int>`.
+**What I initially got wrong.**
+There were a few logic errors when i was first typing up the KMP search, one that really stuck with me was when i was comparing `text[i]` with `pattern[i]` instead of `pattern[j]` which resulted in a string subcript out of range crash. Luckily the use of ai was approved for this assignment and it could detect my mistake instantly.
 
 **Something I understand now that I didn't before.** **[FILL IN]**
 
@@ -248,18 +232,18 @@ _Guidance: check the AI Use Policy at the end of the assignment spec for any req
 
 I used Claude (Anthropic) throughout this project as a tutor and as a code generator for the benchmarking infrastructure.
 
-| Part                                                                                                 | Who wrote it                | How AI was involved                                                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Choosing the baseline and experiment design                                                          | Me with AI assistance    | I decided to compare against naive as the baseline whilst Claude proposed the input families and the two measures (comparisons, time)                                                                 |
-| Visual Studio setup and file structure                                                               | Me                          |  N/A                                                                                             |
-| `buildLPSArray`                                                                                      | Me with AI assistance | Claude provided help to turn the theory into working code and created an interactive trace; I tested it on hand-traced patterns                                                          |
-| `kmpSearch`                                                                                          | Me                          | Claude explained the approach and gave a trace. I wrote the code; Claude found two bugs in my first version (`pattern[i]` for `pattern[j]`, and the `else (j == 0);` semicolon) |
-| `naiveSearch`                                                                                        | Claude                      | Written at my request, with a line-by-line explanation                                                                                                                          |
-| Benchmark harness, counted copies, input generators (`main.cpp`, `CountedSearch`, `InputGenerators`) | Claude                      | Written by Claude and explained to me; I ran them on my machine                                                                                                                 |
-| `plot_results.py`                                                                                    | Claude                      | Written by Claude                                                                                                                                                               |
-| Verification                                                                                         | Claude                      | Claude tested my code against a brute-force reference on 100,000 random inputs                                                                                                  |
-| Interpreting results                                                                                 | Me, with AI help            | Claude explained what the CSV contained and summarised the findings; the analysis in section (b) is my own                                                                      |
-| This report                                                                                          | Me                          | Claude produced this template with my measured numbers filled in. The analysis, section (c) and the final wording are mine                                                      |
+| Part                                                                                                 | Who wrote it          | How AI was involved                                                                                                                                                                    |
+| ---------------------------------------------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Choosing the baseline and experiment design                                                          | Me with AI assistance | I decided to compare against naive as the baseline whilst Claude proposed the input families and the two measures (comparisons, time)                                                  |
+| Visual Studio setup and file structure                                                               | Me                    | N/A                                                                                                                                                                                    |
+| `buildLPSArray`                                                                                      | Me with AI assistance | Claude provided help to turn the theory into working code and created an interactive trace; I tested it on hand-traced patterns                                                        |
+| `kmpSearch`                                                                                          | Me                    | Claude explained the approach and gave a trace. I wrote the code; Claude found two bugs in my first version (`pattern[i]` for `pattern[j]`, and the `else (j == 0);` semicolon)        |
+| `naiveSearch`                                                                                        | Claude                | Written at my request, with a line-by-line explanation                                                                                                                                 |
+| Benchmark harness, counted copies, input generators (`main.cpp`, `CountedSearch`, `InputGenerators`) | Claude                | Written by Claude and explained to me; I ran them on my machine                                                                                                                        |
+| `plot_results.py`                                                                                    | Claude                | Written by Claude                                                                                                                                                                      |
+| Verification                                                                                         | Claude                | Claude tested my code against a brute-force reference on 100,000 random inputs                                                                                                         |
+| Interpreting results                                                                                 | Me, with AI help      | Claude explained what the CSV contained and summarised the findings; the analysis in section (b) was refined by Claude when trying to articulate my words after i reviewed the results |
+| This report                                                                                          | Me                    | Claude produced this template with my measured numbers filled in. The analysis, section (c) and the final wording are mine                                                             |
 
 **[FILL IN: 2–3 sentences reflecting on the AI use. What did it help you understand? Where did you check or push back on what it gave you? What would you do differently?]**
 
