@@ -60,7 +60,7 @@ Comparing the two measures is the core of the study: where they disagree, practi
 - **H3 (typical case):** on random text, naive's cost does not grow with m, because it fails after about σ/(σ − 1) comparisons per alignment.
 - **H4 (alphabet size):** KMP's advantage in comparisons is largest for small σ and disappears as σ grows.
 - **H5 (natural text):** English text behaves like a large alphabet, so naive matches or beats KMP.
-- **H6 (my own prediction): KMP would outperform the naive algorithm in all cases.
+- H6 (my own prediction): KMP would outperform the naive algorithm in all cases.
 
 ### Method
 
